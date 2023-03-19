@@ -17,6 +17,7 @@
 #include "connection_pool.h"
 #include <cassert>
 #include "errors.h"
+#include <iostream>
 
 namespace sw {
 
@@ -124,10 +125,14 @@ ConnectionOptions ConnectionPool::connection_options() {
 
 void ConnectionPool::release(Connection connection) {
     {
+        std::cout << "Will release connection" << std::endl;
+
         std::lock_guard<std::mutex> lock(_mutex);
 
         _pool.push_back(std::move(connection));
     }
+
+    std::cout << "Did release connection" << std::endl;
 
     _cv.notify_one();
 }

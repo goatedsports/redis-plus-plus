@@ -25,6 +25,7 @@
 #include <deque>
 #include "connection.h"
 #include "sentinel.h"
+#include <iostream>
 
 namespace sw {
 
@@ -158,9 +159,11 @@ public:
 
     ~GuardedConnection() {
         // If `GuardedConnection` has been moved, `_pool` will be nullptr.
+        std::cout << "Will release guarded connection" << std::endl;
         if (_pool) {
             _pool->release(std::move(_connection));
         }
+        std::cout << "Did release guarded connection" << std::endl;
     }
 
     Connection& connection() {
