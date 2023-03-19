@@ -42,6 +42,8 @@ template <typename Impl>
 QueuedRedis<Impl>::~QueuedRedis() {
     try {
         _clean_up();
+
+        _connection_pool->release(_guarded_connection->conn());
     } catch (const Error &) {
         // Ensure the destructor does not throw
     }
