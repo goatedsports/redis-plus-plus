@@ -206,11 +206,14 @@ void QueuedRedis<Impl>::_invalidate() {
 
 template <typename Impl>
 void QueuedRedis<Impl>::_clean_up() {
+    std::cout << "Will clean up" << std::endl;
     if (_guarded_connection && !_new_connection) {
+        std::cout << "Inside guarded connection" << std::endl;
         // Something bad happened, we need to close the current connection
         // before returning it back to pool.
         _guarded_connection->connection().invalidate();
     }
+    std::cout << "Did clean up" << std::endl;
 }
 
 template <typename Impl>
