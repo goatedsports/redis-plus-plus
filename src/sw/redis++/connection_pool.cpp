@@ -134,7 +134,7 @@ void ConnectionPool::release(Connection connection) {
 
     std::cout << "Did release connection" << std::endl;
 
-    // _cv.notify_one();
+    _cv.notify_one();
 }
 
 Connection ConnectionPool::create() {
