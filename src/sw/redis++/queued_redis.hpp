@@ -17,6 +17,8 @@
 #ifndef SEWENEW_REDISPLUSPLUS_QUEUED_REDIS_HPP
 #define SEWENEW_REDISPLUSPLUS_QUEUED_REDIS_HPP
 
+#include <iostream>
+
 namespace sw {
 
 namespace redis {
@@ -29,7 +31,7 @@ QueuedRedis<Impl>::QueuedRedis(const ConnectionPoolSPtr &pool,
             _new_connection(new_connection),
             _impl(std::forward<Args>(args)...) {
     assert(pool);
-
+    std::cout << "Con called" << std::endl;
     if (_new_connection) {
         _connection_pool = std::make_shared<ConnectionPool>(pool->clone());
     } else {
@@ -40,6 +42,7 @@ QueuedRedis<Impl>::QueuedRedis(const ConnectionPoolSPtr &pool,
 
 template <typename Impl>
 QueuedRedis<Impl>::~QueuedRedis() {
+    std::cout << "Des called" << std::endl;
     try {
         _clean_up();
     } catch (const Error &) {
