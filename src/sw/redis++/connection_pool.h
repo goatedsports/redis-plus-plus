@@ -33,7 +33,7 @@ namespace redis {
 
 struct ConnectionPoolOptions {
     // Max number of connections, including both in-use and idle ones.
-    std::size_t size = 1;
+    std::size_t size = 10;
 
     // Max time to wait for a connection. 0ms means client waits forever.
     std::chrono::milliseconds wait_timeout{0};
