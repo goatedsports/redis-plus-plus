@@ -48,6 +48,7 @@ QueuedRedis<Impl>::~QueuedRedis() {
     } catch (const Error &) {
         // Ensure the destructor does not throw
     }
+    std::cout << "Des Ended" << std::endl;
 }
 
 template <typename Impl>
