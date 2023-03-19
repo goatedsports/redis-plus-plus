@@ -198,6 +198,7 @@ Connection ConnectionPool::_create(SimpleSentinel &sentinel,
 }
 
 Connection ConnectionPool::_fetch(std::unique_lock<std::mutex> &lock) {
+    std::cout << "Will fetch a connection: " << _pool_opts.size << " " << _used_connections << " " << _pool.size() << std::endl;
     if (_pool.empty()) {
         if (_used_connections == _pool_opts.size) {
             _wait_for_connection(lock);
