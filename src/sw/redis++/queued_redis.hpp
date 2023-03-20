@@ -40,13 +40,28 @@ QueuedRedis<Impl>::QueuedRedis(const ConnectionPoolSPtr &pool,
 
 template <typename Impl>
 QueuedRedis<Impl>::~QueuedRedis() {
+    std::cout << "Inside QueueRedis Des" << std::endl;
+    
+    auto conn = _guarded_connection->conn();
+
     try {
+
+        std::cout << "Will call cleanup" << std::endl;
+
         _clean_up();
 
-        _connection_pool->release(_guarded_connection->conn());
+        std::cout << "Will enter release" << std::endl;
+
+        _connection_pool->release(std::move(conn));
+
+        _guarded_connection.reset();
+
+        std::cout << "Will exit release" << std::endl;
     } catch (const Error &) {
         // Ensure the destructor does not throw
     }
+
+    std::cout << "Return from QueuedRedis Des" << std::endl;
 }
 
 template <typename Impl>
@@ -112,9 +127,15 @@ auto QueuedRedis<Impl>::command(Input first, Input last)
 template <typename Impl>
 QueuedReplies QueuedRedis<Impl>::exec() {
     try {
+        std::cout << "Inside Exec" << std::endl;
+
         _sanity_check();
 
+        std::cout << "Will get reply from impl" << std::endl;
+
         auto replies = _impl.exec(_connection(), _cmd_num);
+
+        std::cout << "Will rewrite reply from impl" << std::endl;
 
         _rewrite_replies(replies);
 
@@ -122,6 +143,8 @@ QueuedReplies QueuedRedis<Impl>::exec() {
         set_cmd_indexes.swap(_set_cmd_indexes);
 
         _reset();
+
+        std::cout << "Will return from exec" << std::endl;
 
         return QueuedReplies(std::move(replies), std::move(set_cmd_indexes));
     } catch (const WatchError &) {
@@ -173,8 +196,10 @@ void QueuedRedis<Impl>::_sanity_check() {
 
 template <typename Impl>
 inline void QueuedRedis<Impl>::_reset(bool reset_connection) {
+    std::cout << "Inside rest" << std::endl;
     if (reset_connection && !_new_connection) {
         _return_connection();
+        std::cout << "After returning" << std::endl;
     }
 
     _cmd_num = 0;
@@ -187,10 +212,14 @@ inline void QueuedRedis<Impl>::_reset(bool reset_connection) {
 template <typename Impl>
 inline void QueuedRedis<Impl>::_return_connection() {
     if (_guarded_connection.use_count() == 1) {
+        std::cout << "Will reset guarded connection" << std::endl;
         // If no one else holding the connection, return it back to pool.
         // Instead, if some other `Redis` object holds the connection,
         // e.g. `auto redis = transaction.redis();`, we cannot return the connection.
-        _guarded_connection.reset();
+        // _guarded_connection.reset();
+        // _connection_pool->release(_guarded_connection->conn());
+
+        std::cout << "Did reset guarded connection" << std::endl;
     }
 }
 
@@ -208,7 +237,7 @@ void QueuedRedis<Impl>::_clean_up() {
     if (_guarded_connection && !_new_connection) {
         // Something bad happened, we need to close the current connection
         // before returning it back to pool.
-        _guarded_connection->connection().invalidate();
+        // _guarded_connection->connection().invalidate();
     }
 }
 

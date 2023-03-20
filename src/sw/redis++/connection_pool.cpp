@@ -135,6 +135,10 @@ void ConnectionPool::release(Connection connection) {
     std::cout << "Did release connection" << std::endl;
 
     _cv.notify_one();
+
+    connection.reset();
+
+    std::cout << "Return from release connection" << std::endl;
 }
 
 Connection ConnectionPool::create() {
@@ -204,6 +208,8 @@ Connection ConnectionPool::_fetch(std::unique_lock<std::mutex> &lock) {
             _wait_for_connection(lock);
         } else {
             ++_used_connections;
+            
+            std::cout << "Will return a connection" << std::endl;
 
             // Lazily create a new (broken) connection to avoid connecting with lock.
             return Connection(_opts, Connection::Dummy{});

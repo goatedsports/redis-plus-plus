@@ -16,6 +16,7 @@
 
 #include "transaction.h"
 #include "command.h"
+#include <iostream>
 
 namespace sw {
 
@@ -78,7 +79,11 @@ void TransactionImpl::_get_queued_replies(Connection &connection, std::size_t cm
 }
 
 std::vector<ReplyUPtr> TransactionImpl::_exec(Connection &connection) {
+    std::cout << "Will call exec on command" << std::endl;
+
     cmd::exec(connection);
+
+    std::cout << "Will get replies" << std::endl;
 
     auto reply = connection.recv();
 

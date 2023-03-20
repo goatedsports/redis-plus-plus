@@ -148,6 +148,8 @@ class GuardedConnection {
 public:
     explicit GuardedConnection(const ConnectionPoolSPtr &pool) : _pool(pool),
                                                         _connection(_pool->fetch()) {
+                                                            
+        std::cout << "Guarded Connection Con" << std::endl;                                                   
         assert(!_connection.broken());
     }
 
