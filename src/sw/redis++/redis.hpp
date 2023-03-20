@@ -41,10 +41,22 @@ auto Redis::command(Cmd cmd, Args &&...args)
     } else {
         assert(_pool);
 
-        // Pool Mode, i.e. get connection from pool.
-        SafeConnection connection(*_pool);
+        std::cout << "Inside pool" << std::endl;
+        assert(_pool);
 
-        return _command(connection.connection(), cmd, std::forward<Args>(args)...);
+        // Pool Mode, i.e. get connection from pool.
+        // SafeConnection connection(*_pool);
+        GuardedConnection connection(_pool);
+
+        ReplyUPtr res;
+        {
+            std::cout << "Will execute command" << std::endl;
+            auto conn = connection.conn();
+            res = _command(conn, cmd, std::forward<Args>(args)...);
+            std::cout << "Did execute command" << std::endl;
+        }
+        std::cout << "Will return from command" << std::endl;
+        return res;
     }
 }
 
