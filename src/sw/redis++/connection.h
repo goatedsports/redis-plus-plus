@@ -119,10 +119,14 @@ public:
     Connection(const Connection &) = delete;
     Connection& operator=(const Connection &) = delete;
 
-    Connection(Connection &&) = default;
+    Connection(Connection &&input) {
+        _ctx = std::move(input._ctx);
+        input._ctx = nullptr;
+    }//= default;
+
     Connection& operator=(Connection &&) = default;
 
-    ~Connection() = default;
+    virtual ~Connection() = default;
 
     // Check if the connection is broken. Client needs to do this check
     // before sending some command to the connection. If it's broken,
@@ -132,13 +136,17 @@ public:
     }
 
     void reset() noexcept {
-        assert(_ctx);
-        _ctx->err = 0;
+        // assert(_ctx);
+        if (_ctx) {
+            _ctx->err = 0;
+        }
     }
 
     void invalidate() noexcept {
-        assert(_ctx);
-        _ctx->err = REDIS_ERR;
+        // assert(_ctx);
+        if (_ctx) {
+            _ctx->err = REDIS_ERR;
+        }
     }
 
     void reconnect();

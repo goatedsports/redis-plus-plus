@@ -190,7 +190,7 @@ inline void QueuedRedis<Impl>::_return_connection() {
         // If no one else holding the connection, return it back to pool.
         // Instead, if some other `Redis` object holds the connection,
         // e.g. `auto redis = transaction.redis();`, we cannot return the connection.
-        _guarded_connection.reset();
+        // _guarded_connection.reset();
     }
 }
 
@@ -208,7 +208,7 @@ void QueuedRedis<Impl>::_clean_up() {
     if (_guarded_connection && !_new_connection) {
         // Something bad happened, we need to close the current connection
         // before returning it back to pool.
-        _guarded_connection->connection().invalidate();
+        // _guarded_connection->connection().invalidate();
     }
 }
 
